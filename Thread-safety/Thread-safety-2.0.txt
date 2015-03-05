@@ -1,0 +1,88 @@
+- Writing thread-safe code is all about managing access to state of an object i.e in particular shared, mutable states.
+  1.Shared  : means that variable can be accessed by multiple threads.
+  2.Mutable : means that variable can be changed during its lifetime.  
+
+- An object is basically composed of state (instance or static fields) & behaviour (means methods).  
+  
+- An object's state is its data, stored in state variables such as instance or static fields.
+  E.g.:-
+    public class ThreadSafety {
+	   //A instance field, which is the state of this object.
+	   private int counter = 0;  
+	   
+	   public void increment() {
+	       count++;
+	   }
+	   
+	   public void get() {
+		   return count;		   
+	   }
+	}
+	
+- Thread safety is all about protecting data from uncontrolled access. 
+
+- Making an object "thread safe" requires synchronization to coordinate access to the
+  state variables, failing to do so can cause data corruption leading to undesirable
+  consequences.
+  
+- If multiple threads access a state variable & if one of them might write into it, then 
+  we need to coordinate access to the variable using "Synchronization".
+  
+- "Synchronization" in java is primarely provided by the synchronization keyword, but the "Synchronization"
+  also means using "volatile" variables, explicit locks, and atomic variables.
+
+=>KEY-NOTE: 
+  - If multiple threads access a mutable state variable without appropriate "Synchronization", then the program is 
+    broken, there are 3 ways to avoid it.
+	1. Don't share the state variables.
+	2. Make the state variable immutable.
+	3. Use Synchronization whenever accessing the state variable.
+
+- How to implement thread safety is a very common questions, however the concepts of OOPS such as encapsulation & 
+  data-hiding can help us create thread-safety classes.
+  
+- Java language does not enforce to encapsulate state (i.e instance or static fields), it is pretty ok to
+  make your state variables "public" or publish (share) you reference to other object.However the better 
+  encapsulated your program state, the easier it is to make your program thread safe and maintainable.  
+  For E.g.:-   
+   public class UnsafeCounter {
+      //This variable can be accessed by the owning object.
+      public int count;
+	  
+      public void increment() {
+		count++;
+	  }
+   }
+  
+   public class SafeCounter {
+      //State variable is hidden, can only be accessed from methods.
+	  private int count;
+	  
+	  /* 
+	     Accessing or changing the state variable are done 
+	     in a synchronized way.
+	  */
+	  public synchronized increment(){
+		count++;
+	  }
+	  
+	  public synchronized get(){
+		return count;
+	  }
+   }
+   
+=>KEY-NOTE:
+  - When designing thread-safe classes, good OOP techniques - encapsulation, immutability & clear specification 
+    of invariants (what can change & what does not change) - are your best friends.
+  
+=>KEY-NOTE:
+  - Good practice : First make your code right, and then make it fast.
+  
+- Difference between thread-safe-class & thread-safe-program:
+  - A program that entirely contain thread-safe-classes may not be a thread-safe-program.
+  - A thread-safe-program may contain classes that are not thread-safe.
+
+- Thread-safety may be a term that is applied to code, but it is about state, and it can only be applied to 
+  the entire body of code that encapsulates it state, which may be an object or an entire program.
+  
+  
