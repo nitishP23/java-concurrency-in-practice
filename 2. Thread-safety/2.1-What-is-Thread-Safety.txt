@@ -1,0 +1,76 @@
+								**** 2.1 - What is Thread safety? ****
+
+-> Some of numerous definitions of "Thread safety" from Google are: 
+   1.It can be called from multiple threads, without unwanted interactions between the threads.
+   2.May be called by more than one thread at a time without requiring any other action on the "caller's" part.
+   ....
+
+-> But the above definition are vague (they do not completely tell what thread-safety is), so how do we
+   tell a thread-safe from a unsafe one? What do you mean by "safe".
+   
+-> Thread safety is the concept of correctness, correctness means a class conforms to its specification (requirements).
+   A good specification defines
+   1. Invariants constraining an object's state :
+        Invariant: A condition that can be relied upon to be true during execution of a program, 
+		           or during some portion of it - from wikipedia.
+	    Check out some answers which i found on net :
+			R1. http://en.wikipedia.org/wiki/Invariant_(computer_science)
+			R2. http://stackoverflow.com/questions/8902331/what-is-a-class-invariant-in-java
+			R3. http://www.javapractices.com/topic/TopicAction.do?Id=6
+		Taken from R3 link - 
+		   - Class invariants are methods which check the validity of an object's state (its data). 
+		   - The idea is to define validation methods for fields, and to perform these validations 
+		     whenever the fields change
+		   - An object's state may become invalid for various reasons:
+				1.An invalid argument is passed by the caller. 
+				2.The implementation of the class is defective. 
+		   
+		   Eg:
+			 //Example taken from R1 link in the above link
+			 public void Counter {			 
+				private int count;				
+				
+				public synchronized void count() {
+					//Explictly checking if the overflow occurs. 
+					if(count == Integer.MAX_VALUE) {
+						throw new IllegalArgumentException();
+					}
+					return count++;
+				}			 
+			 }		 	 
+		
+   2. Post conditions describing the effects of its operations.
+   
+-> Normally we do not design according to specification, and we just deduce that a "code works",
+  "Code confidence" gives us a illusion that the program is "correct", this is as close as we get to "Correctness".
+
+-> Hence we can deduce thread safety as - 
+    A class is thread-safe if:
+    1.It behaves correctly when accessed from multiple threads, regardless scheduling or interleaving of 
+	  the execution of the threads at run-time environment
+    2.No additional synchronization or other coordination required on the part of the 'calling code'.
+	3.No sequence of operations on this class can violate any of its invariants or post-conditions.
+	4.No sequence of operations on this class can cause it to be in invalid state.
+
+=> KEY-NOTE:
+   -> Thread-safe classes encapsulate any needed synchronization so that the clients (code that uses these classes)
+     need not provide their own.
+	 
+-> Stateless objects.
+	- When a object does its entire work on it local stack and does not refer or change a mutable value.
+	  Then such a object is called a "Stateless object".A thread that uses such a object will be thread-safe.
+	  
+	- Stateless object are thread-safe, since the changes are done on the thread's local stack.
+	
+	- A thread's stack is private to that thread alone & no other thread can read 
+	  or modify it, this is the design of most operating systems.
+	  
+	For E.g :
+		Check out the :
+			File: WhatIsThreadSafety.java
+			Project: "ThreadSafety" 
+			package: com.nitish.threadSafety
+		in the project attested with this chapter.
+		You can open the project in netbeans and run it out yourself.
+			Steps: In netbeans right-click-on-the-file -> RunFile
+		
