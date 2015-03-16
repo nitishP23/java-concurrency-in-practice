@@ -1,0 +1,30 @@
+		**** 2.2 - Atomicity ****
+
+-> A simple operation like incrementing a counter is not a single operation rather a composition of multiple operations.
+   E.g:      
+	 "count++" is short for 3 operations:
+	 1.Fetch the current value of "count" variable.
+	 2.Add one to it.
+	 3.Write back the new value into "count" variable.
+	 
+	 This is an example of "read-modify-write" operations, in which the resulting state is derived from the previous state.	 
+	 E.g:
+	  public class UnsafeCounter {
+		private int counter;
+		
+		public int getCount() {
+			return counter;
+		}
+		
+		public void increment() {
+			counter++;
+		}
+	  }
+	- This above example of UnsafeCounter is not thread-safe
+	- Imagine if 2 threads (thread-1 & thread-2) calls increment(), what could happen?
+    - if counter is 9, then with some unlucky timing both threads could increment the value to 10.
+	  (Infact this unlucky timings can cause other issues like reading stale data)
+
+-> The possibility of incorrect results in presence of unlucky timing is called "race conditions".
+
+	
