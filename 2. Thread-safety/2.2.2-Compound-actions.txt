@@ -1,0 +1,69 @@
+			**** Compound actions ****
+
+-> We refer both "check-then-act" & "read-modify-write" operations as "compound actions" i.e these operations
+  have to be executed "atomically" in order to remain thread-safe
+
+-> Normally we will use locks to achieve atomicity for both "check-then-act" & "read-modify-write" operations.
+   eg-1.1: 
+   "read-modify-write" rectified by using locks
+		  public class UnsafeCounter {
+			private int counter;
+			
+			public synchronized int getCount() {
+				return counter;
+			}
+			
+			public synchronized void increment() {
+				counter++;
+			}
+		  }
+	  
+	eg-1.2:
+ 	"read-modify-write" rectified by using "AtomicInteger" from java.util.atomic package (i.e without explicit locks)
+   (check out: http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicInteger.html)
+		  public class UnsafeCounter {
+			private AtomicInteger counter = new AtomicInteger(0);
+			
+			public int getCount() {
+				return counter.get();
+			}
+			
+			public void increment() {
+				counter.incrementAndGet();
+			}
+		  }
+		  
+	eg-2:
+	"check-then-act" rectified using double-checked-locking mechanism.
+		public class UnsafeSingleton {					
+			private static volatile UnsafeSingleton unsafeInstance;
+			
+			private UnsafeSingleton() {
+			}
+			
+			/**
+			* Create a single instance of this class, but create it using lazy-initialization.
+			* i.e you create this object when you call this method for the first time.
+			*/
+			public static UnsafeSingleton getInstance() {	
+				//check first time.
+				if(unsafeInstance == null) {
+					synchronized(this) {
+						//check second time.
+						if(unsafeInstance == null) {
+							unsafeInstance = new UnsafeSingleton();
+						}
+					}
+				}
+				return unsafeInstance;
+			}
+		 }
+	
+	- Image here if thread-A enters the "synchronized" block first, it checks "unsafeInstance" is null, so initializes it.
+	  But thread-B is blocked (due to synchronization) & waiting for the lock to be released.
+	- Thread-A completes the initialization of the object & comes out (so "unsafeInstance" is not null) & releases the lock.
+	- Thread-B acquires the lock & enters the "synchronized" block, but sees that the "unsafeInstance" is not null,
+	  so it does nothing.
+	- This synchronized block entering is done only once, since once the object is initialized threads no longer needs
+	  to enter it again.
+	- NOTE: this is just one of the methods to rectify this, there are other methods as well.
