@@ -8,7 +8,7 @@
 	 3.Write back the new value into "count" variable.
 	 
 	 This is an example of "read-modify-write" operations, in which the resulting state is derived from the previous state.	 
-	 E.g:
+	 eg-1:
 	  public class UnsafeCounter {
 		private int counter;
 		
@@ -20,11 +20,9 @@
 			counter++;
 		}
 	  }
-	- This above example of UnsafeCounter is not thread-safe
+	- This above eg-1 of UnsafeCounter is not thread-safe
 	- Imagine if 2 threads (thread-1 & thread-2) calls increment(), what could happen?
     - if counter is 9, then with some unlucky timing both threads could increment the value to 10.
 	  (Infact this unlucky timings can cause other issues like reading stale data)
 
 -> The possibility of incorrect results in presence of unlucky timing is called "race conditions".
-
-	

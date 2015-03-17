@@ -1,0 +1,87 @@
+				**** RACE CONDITIONS ****
+
+-> The correctness of computation depends on the relative-timing or interleaving operations of 
+   the threads at runtime i.e basically relying on luck.This type of problem is called "Race condition".
+
+-> The most common type of race condition is "check-then-act", where a potential stale (or incorrect) observation
+   is used to make a decision on what to do next.
+   eg-1:
+	   public class UnsafeCounter2 {
+			private int counter;
+			
+			public int getCount() {
+				return counter;
+			}
+			
+			public void increment() {
+				if (counter % 10 == 0) {
+					counter += 10;
+				} else {
+					counter++;
+				}			
+			}
+	   }
+   
+-> Check-then-act race-condition:
+      You observe something to be true & then take action based on that observation, but in fact
+ 	  the observation could have become invalid between the time you observed it & the time you
+	  acted upon it.
+            
+-> Lets take a example of a check-then-act race condition in real-life
+   - Lets say you planned to meet your friend at a mall called "Starbucks" 
+     at 12.00pm in university-main-road.
+   - But after reaching the place you see there are 2 malls called "Starbucks" 
+     in the same road & you do not know which one you have agreed upon on to meet.
+   - Lets call them "Starbucks-A" & "Starbucks-B"
+   - So you are at "Starbucks-A" & it's already 12.10 & your friend is nowhere to be seen,
+     so you decide to go and check out "Starbucks-B" but he isn't there either.
+   - There are few possibilities:
+		1.Your friend is late & is in neither of the places or
+		2.Your friend arrived at Starbucks-A after you left or
+		3.Your friend was at Starbucks-B and went looking for you at Starbucks-A 
+		 (by this time your have already left for Starbucks-B)
+   - As you see you would be continously moving back and forth.
+     (which is frustrating & it would cause your friendship to end - just kidding)
+	 
+-> Check-then-act race-condition in lazy-initialization:
+   - Most common place to use lazy-initialization would be in a "Singleton pattern"
+    ( please check : http://www.tutorialspoint.com/design_pattern/singleton_pattern.htm )
+    eg-2:
+		 public class UnsafeSingleton {
+			//you can make it static, since we are only creating one instance of it.
+			private static UnsafeSingleton unsafeInstance;
+			
+			/**
+			* You make the constructor private so that no one can initialize
+			* this class from outside, it can only be initialized from withing 
+			* this class.
+			*/
+			private UnsafeSingleton() {
+			}
+			
+			/**
+			* Create a single instance of this class, but create it using lazy-initialization.
+			* i.e you create this object when you call this method for the first time.
+			*/
+			public static UnsafeSingleton getInstance() {
+				if(unsafeInstance == null) {
+					unsafeInstance = new UnsafeSingleton();
+				}
+				return unsafeInstance;
+			}
+		 }
+	 
+-> The eg-2 has introduces race-conditions, imagine Thread-A & Thread-B calls same method at same time.
+   - Thread-A calls getInstance(), sees that unsafeInstance is null & tries 
+     to initialize the "unsfaceInstance"
+   - At the same time Thread-B calls getInstance(), sees that unsafeInstance
+     is null & also tries to initialize the "unsafeInstance".
+     Now whether the "unsafeInstance" is null depends on:
+	  1.Timing or
+	  2.Scheduling of threads or
+	  3.How long it takes thread-A to initialize "unsafeInstance"
+   - As you can see getInstance() can return different instances even though our design tells it 
+     return a single instance (hence violating singleton design principle)
+   
+- If you had used eg-2 as the code for initializing your application-wide registry, having return different
+  instances can cause some serious issues in your application.
