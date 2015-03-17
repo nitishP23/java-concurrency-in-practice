@@ -1,7 +1,8 @@
 			**** Compound actions ****
 
 -> We refer both "check-then-act" & "read-modify-write" operations as "compound actions" i.e these operations
-  have to be executed "atomically" in order to remain thread-safe
+  have to be executed "atomically" in order to remain thread-safe.
+  (for atomicity refer: http://en.wikipedia.org/wiki/Linearizability)
 
 -> Normally we will use locks to achieve atomicity for both "check-then-act" & "read-modify-write" operations.
    eg-1.1: 
@@ -67,3 +68,7 @@
 	- This synchronized block entering is done only once, since once the object is initialized threads no longer needs
 	  to enter it again.
 	- NOTE: this is just one of the methods to rectify this, there are other methods as well.
+	
+-> Try to use the java.util.concurrent & java.util.atomic packages in project, as this packages provides lot 
+   of thread safe classes which can be used in our projects to achieve thread safety.
+  
